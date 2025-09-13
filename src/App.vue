@@ -1,12 +1,16 @@
 <template>
   <div class="appRoot">
-    <h1>{{ title }}</h1>
+    <h1 @mousemove="handleMouseMove" @mouseleave="handleMouseLeave">{{ title }}</h1>
     <Counter />
   </div>
 </template>
 
 <script>
+// components
 import Counter from './components/Counter.vue'
+
+//componsables
+import { updateShadowPos, resetElementShadow } from './composables/glow'
 
 export default {
   name: "App",
@@ -17,6 +21,13 @@ export default {
     return {
       title: "a Vue app"
     }
+  }, methods: {
+      handleMouseMove(event) {
+          updateShadowPos(event)
+      },
+      handleMouseLeave(event) {
+          resetElementShadow(event)
+      }
   }
 }
 </script>

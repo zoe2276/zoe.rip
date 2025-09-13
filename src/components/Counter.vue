@@ -1,17 +1,27 @@
 <template>
     <div>
-        <button @click="count++">
+        <button @click="count++" @mousemove="handleMouseMove" @mouseleave="handleMouseLeave">
             Clicks: {{ count }}
         </button>
     </div>
 </template>
 
 <script>
+import { updateShadowPos, resetElementShadow } from '../composables/glow';
+
 export default {
     name: "Counter",
     data() {
         return {
             count: 0
+        }
+    },
+    methods: {
+        handleMouseMove(event) {
+            updateShadowPos(event, true)
+        },
+        handleMouseLeave(event) {
+            resetElementShadow(event)
         }
     }
 }
@@ -27,9 +37,5 @@ button {
 
     will-change: filter;
     transition: filter 137ms cubic-bezier(0.5, 0, 1, 2);
-
-    &:hover {
-        filter: drop-shadow(0 0 2.9vmin #42b98377);
-    }
 }
 </style>
