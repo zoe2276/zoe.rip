@@ -1,30 +1,17 @@
 <template>
     <div>
-        <button @click="count++" @mousemove="handleMouseMove" @mouseleave="handleMouseLeave">
+        <button @click="count++" @mousemove="e => updateShadowPos(e, true)" @mouseleave="resetElementShadow">
             Clicks: {{ count }}
         </button>
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from "vue"
 import { updateShadowPos, resetElementShadow } from '../composables/glow';
 
-export default {
-    name: "Counter",
-    data() {
-        return {
-            count: 0
-        }
-    },
-    methods: {
-        handleMouseMove(event) {
-            updateShadowPos(event, true)
-        },
-        handleMouseLeave(event) {
-            resetElementShadow(event)
-        }
-    }
-}
+
+const count = ref(0)
 </script>
 
 <style scoped>

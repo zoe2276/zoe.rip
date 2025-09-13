@@ -1,35 +1,21 @@
 <template>
   <div class="appRoot">
-    <h1 @mousemove="handleMouseMove" @mouseleave="handleMouseLeave">{{ title }}</h1>
+    <h1 @mousemove="e => updateShadowPos(e, true)" @mouseleave="resetElementShadow">{{ title }}</h1>
     <Counter />
   </div>
 </template>
 
-<script>
+<script setup>
+// deps
+import { ref } from "vue"
+
 // components
 import Counter from './components/Counter.vue'
 
 //componsables
 import { updateShadowPos, resetElementShadow } from './composables/glow'
 
-export default {
-  name: "App",
-  components: {
-    Counter
-  },
-  data() {
-    return {
-      title: "a Vue app"
-    }
-  }, methods: {
-      handleMouseMove(event) {
-          updateShadowPos(event)
-      },
-      handleMouseLeave(event) {
-          resetElementShadow(event)
-      }
-  }
-}
+const title = ref("a Vue app")
 </script>
 
 <style scoped>
