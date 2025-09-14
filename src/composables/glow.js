@@ -10,7 +10,6 @@ export const updateShadowPos = (e, scalar = false, color = "#42b983aa") => {
     const dropShadow = `filter: drop-shadow(${offsetX}px ${offsetY}px ${blurRadius}vmin ${color})`
     const newStyleString = `${dropShadow}; will-change: none; transition: none;`
     e.target.setAttribute("style", newStyleString)
-    console.log(dropShadow)
 }
 
 export const resetElementShadow = e => {

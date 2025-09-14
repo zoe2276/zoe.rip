@@ -1,7 +1,9 @@
 <template>
   <div class="appRoot">
-    <h1 @mousemove="e => updateShadowPos(e, true)" @mouseleave="resetElementShadow">{{ title }}</h1>
-    <Counter />
+    <CRTContainer>
+      <h1 @mousemove="e => updateShadowPos(e, true)" @mouseleave="resetElementShadow">{{ title }}</h1>
+      <Counter />
+    </CRTContainer>
   </div>
 </template>
 
@@ -11,11 +13,12 @@ import { ref } from "vue"
 
 // components
 import Counter from './components/Counter.vue'
+import CRTContainer from "./components/CRTContainer.vue"
 
 //componsables
 import { updateShadowPos, resetElementShadow } from './composables/glow'
 
-const title = ref("a Vue app")
+const title = ref("zoe.rip")
 </script>
 
 <style scoped>
