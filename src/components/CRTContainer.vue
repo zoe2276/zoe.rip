@@ -118,6 +118,7 @@ onUnmounted(() => {
 
 <style scoped>
 .crtContainer {
+    
     position: relative;
     width: 100vw;
     height: 100vh;
@@ -149,10 +150,10 @@ onUnmounted(() => {
         padding: 6vh 6vw;
 
         &::after {
-            border-top: 5vh solid #2F2F35FF;
-            border-bottom: 5vh solid #2F2F35FF;
-            border-left: 5vw solid #2F2F35FF;
-            border-right: 5vw solid #2F2F35FF;
+            border-top: 5vh solid #2F2F35;
+            border-bottom: 5vh solid #2F2F35;
+            border-left: 5vw solid #2F2F35;
+            border-right: 5vw solid #2F2F35;
             border-radius: 12vmin;
             box-shadow: inset 0 0 20vmin 5vw #0007;
         }
