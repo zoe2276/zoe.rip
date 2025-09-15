@@ -154,7 +154,7 @@ onUnmounted(() => {
             border-bottom: 5vh solid #2F2F35;
             border-left: 5vw solid #2F2F35;
             border-right: 5vw solid #2F2F35;
-            border-radius: 12vmin;
+            border-radius: 8vmax;
             box-shadow: inset 0 0 20vmin 5vw #0007;
         }
     }
