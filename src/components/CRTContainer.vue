@@ -168,7 +168,7 @@ onUnmounted(() => {
     overflow-y: hidden;
     /* white-space: nowrap; */
     
-    animation: type 1.5s steps(63, end), slideUp 333ms steps(10, end) 1.5s, slideDown 1s steps(17, end) 1333ms;
+    animation: type 2s steps(63, end), slideUp 333ms steps(10, end) 1.5s, slideDown 1s steps(17, end) 1333ms;
 }
 
 @keyframes type {
