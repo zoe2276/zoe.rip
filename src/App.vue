@@ -9,8 +9,8 @@ import CRTContainer from "./components/CRTContainer.vue"
 </script>
 
 <style scoped>
-.app {
-  font-family: "Arial sans-serif";
-  padding: 20px;
+.appRoot {
+  font-family:'Courier New', Courier, monospace;
+  text-shadow: 0 0 1rem #42b983aa;
 }
 </style>

@@ -24,7 +24,6 @@
     background-image: linear-gradient(to right, #42b983ee, #42b983);
     background-clip: text;
     color: #0000;
-    font-family:'Courier New', Courier, monospace;
     font-weight: 500;
     overflow: hidden;
     white-space: nowrap;

@@ -1,10 +1,12 @@
 <!-- provide a CRT display overlay as the root component -->
 <template>
-    <div class="crtContainer">
-        <div class="asciiTitleContainer" @mousemove="e => updateShadowPos(e)" @mouseleave="resetElementShadow">
-            <pre class="asciiTitle"></pre>
+    <div class="crtHousing">
+        <div class="crtContainer">
+            <div class="asciiTitleContainer" @mousemove="e => updateShadowPos(e)" @mouseleave="resetElementShadow">
+                <pre class="asciiTitle"></pre>
+            </div>
+            <Navigation />
         </div>
-        <Navigation />
     </div>
 </template>
 
@@ -20,8 +22,8 @@ const asciiTitle = `
                                                  *                
   ******      ****                ***  ***                ****    
  ********    * ***  *    ***       **** **** * ***       * ***  * 
-*      **   *   ****    * ***       **   ****   ***     *   ****  
-       *   **    **    *   ***      **           **    **    **   
+**     **   *   ****    * ***       **   ****   ***     *   ****  
+*      *   **    **    *   ***      **           **    **    **   
       *    **    **   **    ***     **           **    **    **   
      ***   **    **   ********      **           **    **    **   
       ***  **    **   *******       **           **    **    **   
@@ -31,7 +33,7 @@ const asciiTitle = `
         *               *****    *                ***  **         
        *                        ***                    **         
       *                          *                     **         
-     *                                                  **        
+    **                                                  **        
 `
 const title = ref({ bin: binaryTitle, ascii: asciiTitle })
 
@@ -83,15 +85,8 @@ const removeClass = (selector, className) => {
 
 const initSiteTitle = () => {
     const e = document.querySelector(".asciiTitle")
-    e.innerHTML = title.value.bin
-    setTimeout(() => e.innerHTML = title.value.ascii, 1833)
-    // appendClass(".asciiTitle", "p0") // type
-    // setTimeout(() => removeClass(".asciiTitle", "p0"), 1000)
-    // appendClass(".asciiTitle", "p1") // slideUp
-    // setTimeout(() => removeClass(".asciiTitle", "p1"), 333)
-    // e.innerHTML = title.value.ascii
-    // appendClass(".asciiTitle", "p2") // slideDown
-    // setTimeout(() => removeClass(".asciiTitle", "p2"), 1000)
+    setTimeout(() => e.innerHTML = title.value.bin, 2000)
+    setTimeout(() => e.innerHTML = title.value.ascii, 3833)
 }
 
 // set up "initializing..." effect
@@ -106,7 +101,7 @@ onMounted(() => {
     // })
     initSiteTitle()
     appendClass(".crtContainer", "vignette")
-    appendClass(".navtarget", "shown", 3000)
+    appendClass(".navtarget", "shown", 5000)
 })
 
 // cleanup
@@ -117,8 +112,17 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.crtHousing {
+    /* background-color: #2F2F35; */
+    border-radius: 8px;
+    height: 100vh;
+    max-height: 720px;
+    width: 100vw;
+    max-width: 1280px;
+    z-index: -2;
+}
 .crtContainer {
-    
+    /* background-color: #2F2F35; */
     position: relative;
     width: 100vw;
     height: 100vh;
@@ -127,35 +131,42 @@ onUnmounted(() => {
     transition: border 2s cubic-bezier(0.75, 1, 0.25, 1), border-radius  2s cubic-bezier(0.75, 1, 0.25, 1), box-shadow 2s cubic-bezier(0.75, 1, 0.25, 1), padding 2s cubic-bezier(0.75, 1, 0.25, 1);
 
     &::after {
+        background-color: #2F2F35;
+        z-index: -1;
+        
+        box-sizing:border-box;
         pointer-events: none;
         content: "";
         position: absolute;
         left: 0;
         top: 0;
-        width: 90vw;
-        height: 90vh;
-        /* width: calc(99vw - 10vmin);
-        height: calc(99vh - 10vmin); */
 
-        background-color: none;
-        border: 0 solid #000F;
+        height: 100vh;
+        max-height: 720px;
+        width: 100vw;
+        max-width: 1280px;
+        /* height: 100%;
+        width: 100%; */
+
         box-shadow: none;
 
         will-change: border, border-radius, box-shadow, padding;
-        transition: border 2s cubic-bezier(0.75, 1, 0.25, 1), border-radius  2s cubic-bezier(0.75, 1, 0.25, 1);
+        /* transition: border 2s cubic-bezier(0.75, 1, 0.25, 1), border-radius  2s cubic-bezier(0.75, 1, 0.25, 1); */
+        transition: all 2s ease-in;
     }
 
     &.vignette {
-        background-color: #2F2F35;
+        height: 94%;
         padding: 6vh 6vw;
+        width: 94%;
 
         &::after {
-            border-top: 5vh solid #2F2F35;
-            border-bottom: 5vh solid #2F2F35;
-            border-left: 5vw solid #2F2F35;
-            border-right: 5vw solid #2F2F35;
-            border-radius: 8vmax;
-            box-shadow: inset 0 0 20vmin 5vw #0007;
+            border-top: 32px solid #2F2F35;
+            border-bottom: 32px solid #2F2F35;
+            border-left: 40px solid #2F2F35;
+            border-right: 40px solid #2F2F35;
+            border-radius: 60px;
+            box-shadow: inset 0 0 200px 80px #0007;
         }
     }
 }
@@ -166,13 +177,15 @@ onUnmounted(() => {
     line-height: 1;
     overflow: hidden;
     overflow-y: hidden;
-    /* white-space: nowrap; */
+    /* white-space: nowrap;  */
     
-    animation: type 2s steps(63, end), slideUp 333ms steps(10, end) 1.5s, slideDown 1s steps(17, end) 1333ms;
+    animation: type 2s steps(63, end) 2s forwards, slideUp 333ms linear 3s forwards, slideDown 1s steps(17, end) 3833ms forwards;
 }
 
 @keyframes type {
-    from { width: 0 }
+    from {
+        width: 0;
+    }
     to { width: 100% }
 }
 
