@@ -1,8 +1,9 @@
 <!-- provide a CRT display overlay as the root component -->
 <template>
     <div class="crtHousing">
-        <div class="crtContainer">
-            <div class="asciiTitleContainer" @mousemove="e => updateShadowPos(e)" @mouseleave="resetElementShadow">
+        <div class="crtContainer" @mousemove="updateShadowPos" @mouseleave="resetElementShadow">
+            <CursorGlow />
+            <div class="asciiTitleContainer">
                 <pre class="asciiTitle"></pre>
             </div>
             <Navigation />
@@ -14,6 +15,7 @@
 import { ref, onMounted, onUnmounted } from "vue"
 import { resetElementShadow, updateShadowPos } from "../composables/glow"
 import Navigation from "./Navigation.vue"
+import CursorGlow from "./CursorGlow.vue"
 
 const binaryTitle = "01111010 01101111 01100101 00101110 01110010 01101001 01110000"
 const asciiTitle = `
