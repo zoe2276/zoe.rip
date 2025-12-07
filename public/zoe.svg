@@ -1,0 +1,8 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>Layer 1</title>
+  <text style="--darkreader-inline-fill: var(--darkreader-text-000000, #e8e6e3); --darkreader-inline-stroke: var(--darkreader-border-000000, #8c8273);" transform="matrix(4.21051 0 0 4.04414 306.149 -0.676407)" stroke="#000" font-weight="bold" xml:space="preserve" text-anchor="start" font-family="'Yrsa'" font-size="144" id="svg_1" y="105.81909" x="-73.52779" stroke-width="0" fill="#000000">zoe</text>
+  <path style="--darkreader-inline-fill: var(--darkreader-background-ffffff, #181a1b);" transform="rotate(180 391.111 312.192)" stroke="null" stroke-width="55" id="svg_3" d="m290.50093,341.07359l19.92772,-89.81999l80.6821,-39.97371l80.68212,39.97371l19.92808,89.81999l-55.83536,72.03052l-89.5497,0l-55.83498,-72.03052z" fill="#fff"/>
+ </g>
+</svg>
