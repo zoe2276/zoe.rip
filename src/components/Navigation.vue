@@ -1,20 +1,24 @@
 <template>
     <div class="navmenu">
         <div class="navtarget">welcome. where would you like to go?</div>
-        <div class="navtarget">./about</div>
-        <div class="navtarget">./projects</div>
+        <div class="navtarget" @click="updatePage">./about</div>
+        <div class="navtarget" @click="updatePage">./projects</div>
     </div>
 </template>
 
 <script setup>
-const toNewPage = () => {
-
+import { ref } from "vue"
+const updatePage = (e) => {
+    console.log(e.target.innerHTML)
+    page = e
 }
+
+const page = ref("")
 </script>
 
 <style scoped>
 .navmenu {
-    align-self:flex-end;
+    /* align-self:flex-end; */
     justify-self:flex-start;
     text-align: start;
 
@@ -33,23 +37,12 @@ const toNewPage = () => {
     white-space: nowrap;
     /* margin: 0 auto; */
     width: 0;
-
-    /* animation: typing 1.3s steps(10, end) 6s; */
+    height: 0;
 
     &.shown {
         width: 100%;
+        height: auto;
     }
-    /* &[style^="animation"] {
-        width: 100%;
-    } */
-}
-
-.typing {
-    animation: typing 1.3s steps(10, end);
-}
-
-@keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
+    /* animation: typing 1.3s steps(10, end) 6s; */
 }
 </style>
