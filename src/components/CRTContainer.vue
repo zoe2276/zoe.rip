@@ -77,8 +77,8 @@ class TypeText {
 }
 
 
-const appendClass = (selector, className, delay = 0) => {
-    document.querySelectorAll(selector).forEach(e => setTimeout(() => e.classList.add(className), delay))
+const appendClass = (selector, className, delay = 0, first) => {
+    (first ? [document.querySelector(`${selector}:not(.${className})`)].filter(Boolean) : document.querySelectorAll(selector)).forEach(e => setTimeout(() => e.classList.add(className), delay))
 }
 
 const removeClass = (selector, className) => {
@@ -89,6 +89,20 @@ const initSiteTitle = () => {
     const e = document.querySelector(".asciiTitle")
     setTimeout(() => e.innerHTML = title.value.bin, 2000)
     setTimeout(() => e.innerHTML = title.value.ascii, 3833)
+}
+
+const typeNavTarget = () => {
+    const navTargets = document.querySelectorAll(".navtarget:not(.shown)")
+    let delay = 6
+    for (let i = 0; i < navTargets.length; i++) {
+        const el = navTargets[i]
+        const charCount = el.innerHTML.length
+        const typeDuration = charCount / 15
+        const styleString = `animation: type ${typeDuration}s steps(${charCount}, end) ${delay}s;`
+        el.setAttribute("style", styleString)
+        setTimeout(() => el.classList.add("shown"), delay * 1001)
+        delay += typeDuration
+    }
 }
 
 // set up "initializing..." effect
@@ -103,7 +117,8 @@ onMounted(() => {
     // })
     initSiteTitle()
     appendClass(".crtContainer", "vignette")
-    appendClass(".navtarget", "shown", 5000)
+    // appendClass(".navtarget", "shown", 6000)
+    typeNavTarget()
 })
 
 // cleanup
@@ -112,6 +127,13 @@ onUnmounted(() => {
     removeClass(".navtarget", "typing")
 })
 </script>
+
+<style>
+@keyframes type {
+    from { width: 0; }
+    to { width: 100% }
+}
+</style>
 
 <style scoped>
 .crtHousing {
@@ -182,13 +204,6 @@ onUnmounted(() => {
     /* white-space: nowrap;  */
     
     animation: type 2s steps(63, end) 2s forwards, slideUp 333ms linear 3s forwards, slideDown 1s steps(17, end) 3833ms forwards;
-}
-
-@keyframes type {
-    from {
-        width: 0;
-    }
-    to { width: 100% }
 }
 
 @keyframes slideUp {

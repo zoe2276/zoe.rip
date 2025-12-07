@@ -1,11 +1,15 @@
 <template>
     <div class="navmenu">
+        <div class="navtarget">welcome. where would you like to go?</div>
         <div class="navtarget">./about</div>
         <div class="navtarget">./projects</div>
     </div>
 </template>
 
 <script setup>
+const toNewPage = () => {
+
+}
 </script>
 
 <style scoped>
@@ -30,11 +34,14 @@
     /* margin: 0 auto; */
     width: 0;
 
-    animation: typing 1.3s steps(10, end) 3s;
+    /* animation: typing 1.3s steps(10, end) 6s; */
 
     &.shown {
         width: 100%;
     }
+    /* &[style^="animation"] {
+        width: 100%;
+    } */
 }
 
 .typing {
