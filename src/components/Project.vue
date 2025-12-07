@@ -1,0 +1,14 @@
+<template>
+    <div>
+        <li><h3><em>{{ title }}</em></h3></li>
+            <ul><li><a :href="link" target="_blank" v-if="link">{{ description }}</a><span v-else>{{  description }}</span></li></ul>
+    </div>
+</template>
+
+<script setup>
+defineProps(["title", "link", "description"])
+</script>
+
+<style scoped>
+
+</style>

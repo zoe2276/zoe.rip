@@ -1,13 +1,19 @@
 <template>
-    <div id="page-about">
+    <div id="page-projects">
         <pre>these are my projects</pre>
-
+        <div>
+            <ul>
+                <Project title="monitorman" link="https://github.com/zoe2276/monitorman" description="a monitor dimension manager written in Java. work in progress" />
+                <Project title="hanoiLoader" description="a react loading component supporting determinate and indeterminate states" />
+            </ul>
+        </div>
         <Navigation v-model="currentPage"/>
     </div>
 </template>
 
 <script setup>
 import Navigation from '../components/Navigation.vue';
+import Project from '../components/Project.vue';
 const currentPage = defineModel()
 </script>
 
@@ -24,7 +30,7 @@ const currentPage = defineModel()
 </style>
 
 <style scoped>
-#page-about {
+#page-projects {
     animation: slideDown 1s steps(17, end) forwards;
     height: 100%;
     display: flex;
