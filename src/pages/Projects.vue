@@ -4,7 +4,7 @@
         <div>
             <ul>
                 <Project title="monitorman" link="https://github.com/zoe2276/monitorman" description="a monitor dimension manager written in Java. work in progress" />
-                <Project title="hanoiLoader" description="a react loading component supporting determinate and indeterminate states" />
+                <Project title="hanoiLoader" link="https://github.com/zoe2276/hanoiLoader" description="a react loading component supporting determinate and indeterminate states" />
             </ul>
         </div>
         <Navigation v-model="currentPage"/>
