@@ -1,6 +1,6 @@
 <template>
     <div id="page-about">
-        <pre>hello. my name is zoe. this is my website. make yourself at home.</pre>
+        <pre>these are my projects</pre>
 
         <Navigation v-model="currentPage"/>
     </div>

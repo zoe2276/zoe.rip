@@ -3,14 +3,15 @@
         <div class="asciiTitleContainer">
             <pre class="asciiTitle"></pre>
         </div>
-        <Navigation />
+        <Navigation v-model="currentPage" />
     </div>
 </template>
 
 <script setup>
-import {ref, onMounted, onUnmounted} from "vue"
+import {ref, onMounted} from "vue"
 import Navigation from "../components/Navigation.vue"
 
+const currentPage = defineModel()
 
 const binaryTitle = "01111010 01101111 01100101 00101110 01110010 01101001 01110000"
 const asciiTitle = `
@@ -38,43 +39,17 @@ const appendClass = (selector, className, delay = 0, first) => {
     (first ? [document.querySelector(`${selector}:not(.${className})`)].filter(Boolean) : document.querySelectorAll(selector)).forEach(e => setTimeout(() => e.classList.add(className), delay))
 }
 
-const removeClass = (selector, className) => {
-    document.querySelectorAll(selector).forEach(e => e.classList.remove(className))
-}
-
 const initSiteTitle = () => {
     const e = document.querySelector(".asciiTitle")
     setTimeout(() => e.innerHTML = title.value.bin, 2000)
     setTimeout(() => e.innerHTML = title.value.ascii, 3833)
 }
 
-const typeNavTarget = () => {
-    const navTargets = document.querySelectorAll(".navtarget:not(.shown)")
-    let delay = 6
-    for (let i = 0; i < navTargets.length; i++) {
-        const el = navTargets[i]
-        const charCount = el.innerHTML.length
-        const typeDuration = charCount / (i === 0 ? 15 : 7)
-        const styleString = `animation: type ${typeDuration}s steps(${charCount}, end) ${delay}s, grow 1ms steps(1, end) ${delay}s;`
-        el.setAttribute("style", styleString)
-        setTimeout(() => el.classList.add("shown"), delay * 1001)
-        delay += typeDuration
-    }
-}
-
 // set up "initializing..." effect
 onMounted(() => {
     initSiteTitle()
     appendClass(".crtContainer", "vignette")
-    typeNavTarget()
 })
-
-// cleanup
-onUnmounted(() => {
-    removeClass(".crtContainer", "vignette")
-    removeClass(".navtarget", "typing")
-})
-
 </script>
 
 <style>
@@ -86,6 +61,16 @@ onUnmounted(() => {
 @keyframes grow {
     from { height: 0 }
     to { height: auto }
+}
+
+@keyframes slideUp {
+    from { max-height: 100vh }
+    to { max-height: 0 }
+}
+
+@keyframes slideDown {
+  from { max-height: 0 }
+  to { max-height: 100vh }
 }
 </style>
 

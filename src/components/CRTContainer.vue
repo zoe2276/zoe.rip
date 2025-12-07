@@ -3,23 +3,40 @@
     <div class="crtHousing">
         <div class="crtContainer" @mousemove="updateShadowPos" @mouseleave="resetElementShadow">
             <CursorGlow />
-            <component :is="pageToRender" />
+            <component :is="pageToRender" v-model="currentPage" />
         </div>
     </div>
 </template>
 
 <script setup>
-import { shallowRef } from "vue"
+import { ref, computed, onUnmounted } from "vue"
 import { resetElementShadow, updateShadowPos } from "../composables/glow"
 import Home from "../pages/Home.vue"
+import About from "../pages/About.vue"
+import Projects from "../pages/Projects.vue"
 import CursorGlow from "./CursorGlow.vue"
 
-import page from "./Navigation.vue"
+const currentPage = ref("./home")
 
-const pageToRender = shallowRef(page === "./about" ? About : page === "./projects" ? Projects : Home ?? Home)
+const pageMap = { Home, About, Projects }
+const normalize = v => v.replace("\./", "")[0].toUpperCase() + v.replace("\./", "").slice(1)
+const pageToRender = computed(() => pageMap[normalize(currentPage.value)] ?? Home)
+
+const removeClass = (selector, className) => {
+    document.querySelectorAll(selector).forEach(e => e.classList.remove(className))
+}
+
+// cleanup
+onUnmounted(() => {
+    removeClass(".crtContainer", "vignette")
+})
+
 </script>
 
 <style scoped>
+* {
+    color: #42b983;
+}
 .crtHousing {
     /* background-color: #2F2F35; */
     border-radius: 8px;
@@ -77,15 +94,5 @@ const pageToRender = shallowRef(page === "./about" ? About : page === "./project
             box-shadow: inset 0 0 200px 80px #0007;
         }
     }
-}
-
-@keyframes slideUp {
-    from { max-height: 100vh }
-    to { max-height: 0 }
-}
-
-@keyframes slideDown {
-  from { max-height: 0 }
-  to { max-height: 100vh }
 }
 </style>
