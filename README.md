@@ -1,3 +1,0 @@
-# zoe.rip
-
-a website
