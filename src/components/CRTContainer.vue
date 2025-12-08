@@ -44,7 +44,7 @@ onUnmounted(() => {
     max-height: 720px;
     width: 100vw;
     max-width: 1280px;
-    z-index: -2;
+    margin-left: clamp(0px, calc(50vw - (0.5 * 1280px)), 100vw);
 }
 .crtContainer {
     /* background-color: #2F2F35; */
@@ -57,6 +57,7 @@ onUnmounted(() => {
 
     &::after {
         background-color: #2F2F35;
+        color: #2F2F35;
         z-index: -1;
         
         box-sizing:border-box;
