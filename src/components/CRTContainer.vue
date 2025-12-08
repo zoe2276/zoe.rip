@@ -82,9 +82,9 @@ onUnmounted(() => {
     }
 
     &.vignette {
-        height: 94%;
-        padding: 6vh 6vw;
-        width: 94%;
+        height: 100%;
+        padding: 4rem 5rem;
+        width: 100%;
 
         &::after {
             border-top: 32px solid #2F2F35;
