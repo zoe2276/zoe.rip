@@ -1,21 +1,18 @@
 <template>
     <div class="navmenu">
-        <div class="navtarget" v-if="currentPage === './home'">welcome. where would you like to go?</div>
-        <div class="navtarget active" @click="updatePage" v-if="currentPage !== './home'">./home</div>
+        <div class="navtarget" v-if="$route.path === '/'">welcome. where would you like to go?</div>
+        <RouterLink class="navtarget active" v-if="$route.path !== '/'" to="/">./home</RouterLink>
         <div class="navtarget" v-else>./home [*]</div> 
-        <div class="navtarget active" @click="updatePage" v-if="currentPage !== './about'">./about</div>
+        <RouterLink class="navtarget active" v-if="$route.path !== '/about'" to="/about">./about</RouterLink>
         <div class="navtarget" v-else>./about [*]</div>
-        <div class="navtarget active" @click="updatePage" v-if="currentPage !== './projects'">./projects</div>
+        <RouterLink class="navtarget active" v-if="$route.path !== '/projects'" to="/projects">./projects</RouterLink>
         <div class="navtarget" v-else>./projects [*]</div>
     </div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue'
-const currentPage = defineModel()
-
-const updatePage = e => currentPage.value = e.target.innerHTML
-
+import { RouterLink, useRoute } from 'vue-router'
 
 const typeNavTarget = (delay = 6) => {
     const navTargets = document.querySelectorAll(".navtarget:not(.shown)")
@@ -32,8 +29,9 @@ const typeNavTarget = (delay = 6) => {
 
 
 // set up "initializing..." effect
+const route = useRoute()
 onMounted(() => {
-    typeNavTarget(currentPage.value === "./home" ? 6 : 1)
+    typeNavTarget(route.path === "/" ? 6 : 1)
 })
 </script>
 

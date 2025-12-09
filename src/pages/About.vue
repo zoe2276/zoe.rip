@@ -1,14 +1,12 @@
 <template>
     <div id="page-about">
         <pre>hello. my name is zoe. this is my website. make yourself at home.</pre>
-
-        <Navigation v-model="currentPage"/>
+        <Navigation />
     </div>
 </template>
 
 <script setup>
 import Navigation from '../components/Navigation.vue';
-const currentPage = defineModel()
 </script>
 
 <style>

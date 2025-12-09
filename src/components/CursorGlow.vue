@@ -10,7 +10,7 @@
 <style scoped>
 .cursorGlow {
     position: absolute;
-    width: 5vmin;
+    width: 3rem;
     aspect-ratio: 1 / 1;
     border-radius: 100%;
 }

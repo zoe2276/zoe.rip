@@ -3,18 +3,19 @@
         <pre>these are my projects</pre>
         <div>
             <ul>
+                <Project title="this website" link="https://github.com/zoe2276/zoe.rip" description="website made in Vue" />
                 <Project title="monitorman" link="https://github.com/zoe2276/monitorman" description="a monitor dimension manager written in Java. work in progress" />
                 <Project title="yRTC" link="https://github.com/zoe2276/yrtc" description="a custom RTC client" />
             </ul>
+            
+            <Navigation />
         </div>
-        <Navigation v-model="currentPage"/>
     </div>
 </template>
 
 <script setup>
-import Navigation from '../components/Navigation.vue';
 import Project from '../components/Project.vue';
-const currentPage = defineModel()
+import Navigation from '../components/Navigation.vue';
 </script>
 
 <style>

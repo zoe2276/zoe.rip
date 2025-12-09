@@ -3,7 +3,7 @@
         <div class="asciiTitleContainer">
             <pre class="asciiTitle"></pre>
         </div>
-        <Navigation v-model="currentPage" />
+        <Navigation />
     </div>
 </template>
 

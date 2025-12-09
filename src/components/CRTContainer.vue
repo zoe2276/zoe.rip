@@ -3,24 +3,18 @@
     <div class="crtHousing">
         <div class="crtContainer" @mousemove="updateShadowPos" @mouseleave="resetElementShadow">
             <CursorGlow />
-            <component :is="pageToRender" v-model="currentPage" />
+            <RouterView />
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onUnmounted } from "vue"
+import { onUnmounted } from "vue"
+import { RouterView } from "vue-router"
 import { resetElementShadow, updateShadowPos } from "../composables/glow"
-import Home from "../pages/Home.vue"
-import About from "../pages/About.vue"
-import Projects from "../pages/Projects.vue"
+
+import Navigation from "./Navigation.vue"
 import CursorGlow from "./CursorGlow.vue"
-
-const currentPage = ref("./home")
-
-const pageMap = { Home, About, Projects }
-const normalize = v => v.replace("\./", "")[0].toUpperCase() + v.replace("\./", "").slice(1)
-const pageToRender = computed(() => pageMap[normalize(currentPage.value)] ?? Home)
 
 const removeClass = (selector, className) => {
     document.querySelectorAll(selector).forEach(e => e.classList.remove(className))
