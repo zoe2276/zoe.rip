@@ -35,10 +35,6 @@ const asciiTitle = `
 `
 const title = ref({ bin: binaryTitle, ascii: asciiTitle })
 
-const appendClass = (selector, className, delay = 0, first) => {
-    (first ? [document.querySelector(`${selector}:not(.${className})`)].filter(Boolean) : document.querySelectorAll(selector)).forEach(e => setTimeout(() => e.classList.add(className), delay))
-}
-
 const initSiteTitle = () => {
     const e = document.querySelector(".asciiTitle")
     setTimeout(() => e.innerHTML = title.value.bin, 2000)
@@ -48,7 +44,6 @@ const initSiteTitle = () => {
 // set up "initializing..." effect
 onMounted(() => {
     initSiteTitle()
-    appendClass(".crtContainer", "vignette")
 })
 </script>
 
@@ -58,9 +53,19 @@ onMounted(() => {
     to { width: 100% }
 }
 
+@keyframes backspace {
+    from { width: 100% }
+    to { width: 0; }
+}
+
 @keyframes grow {
     from { height: 0 }
     to { height: auto }
+}
+
+@keyframes grow {
+    from { height: auto }
+    to { height: 0 }
 }
 
 @keyframes slideUp {

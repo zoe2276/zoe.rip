@@ -9,16 +9,23 @@
 </template>
 
 <script setup>
-import { onUnmounted } from "vue"
+import { onMounted, onUnmounted } from "vue"
 import { RouterView } from "vue-router"
 import { resetElementShadow, updateShadowPos } from "../composables/glow"
 
 import Navigation from "./Navigation.vue"
 import CursorGlow from "./CursorGlow.vue"
 
+const appendClass = (selector, className, delay = 0, first) => {
+    (first ? [document.querySelector(`${selector}:not(.${className})`)].filter(Boolean) : document.querySelectorAll(selector)).forEach(e => setTimeout(() => e.classList.add(className), delay))
+}
 const removeClass = (selector, className) => {
     document.querySelectorAll(selector).forEach(e => e.classList.remove(className))
 }
+
+onMounted(() => {
+    appendClass(".crtContainer", "vignette")
+})
 
 // cleanup
 onUnmounted(() => {
@@ -49,6 +56,7 @@ onUnmounted(() => {
     will-change: border, border-radius, box-shadow, padding;
     transition: border 2s cubic-bezier(0.75, 1, 0.25, 1), border-radius  2s cubic-bezier(0.75, 1, 0.25, 1), box-shadow 2s cubic-bezier(0.75, 1, 0.25, 1), padding 2s cubic-bezier(0.75, 1, 0.25, 1);
 
+
     &::after {
         background-color: #2F2F35;
         color: #2F2F35;
@@ -73,6 +81,7 @@ onUnmounted(() => {
         will-change: border, border-radius, box-shadow, padding;
         /* transition: border 2s cubic-bezier(0.75, 1, 0.25, 1), border-radius  2s cubic-bezier(0.75, 1, 0.25, 1); */
         transition: all 2s ease-in;
+        pointer-events: none;
     }
 
     &.vignette {
