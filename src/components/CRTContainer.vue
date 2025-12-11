@@ -34,6 +34,38 @@ onUnmounted(() => {
 
 </script>
 
+<style>
+@keyframes type {
+    from { width: 0; }
+    to { width: 100% }
+}
+
+@keyframes backspace {
+    from { width: 100% }
+    to { width: 0; }
+}
+
+@keyframes grow {
+    from { height: 0 }
+    to { height: auto }
+}
+
+@keyframes grow {
+    from { height: auto }
+    to { height: 0 }
+}
+
+@keyframes slideUp {
+    from { max-height: 100vh }
+    to { max-height: 0 }
+}
+
+@keyframes slideDown {
+  from { max-height: 0 }
+  to { max-height: 100vh }
+}
+</style>
+
 <style scoped>
 * {
     color: #42b983;
