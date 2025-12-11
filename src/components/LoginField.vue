@@ -72,6 +72,13 @@ const updateCaretPos = () => {
 }
 </script>
 
+<style>
+    @keyframes blink {
+        from { background-color: #42b983ee; }
+        to { background-color: transparent; }
+    }
+</style>
+
 <style scoped>
 .loginField-container {
     position: relative;
@@ -93,6 +100,10 @@ input {
     text-shadow: 0 0 1rem #42b983aa;
     
     align-self: flex-start;
+
+    &:focus {
+        border: none;
+    }
 }
 span[class^=label-] {
     overflow: hidden;
@@ -116,7 +127,9 @@ span[class^=label-] {
 
     width: 0.66rem;
     height: 1.25rem;
-    background-color: #42b983ee;
+    /* background-color: #42b983ee; */
+
+    animation: blink 1s steps(2, end) infinite;
 }
 input:focus ~ .caret {
     opacity: 1;
