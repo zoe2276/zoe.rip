@@ -3,13 +3,14 @@
         <div class="asciiTitleContainer">
             <pre class="asciiTitle"></pre>
         </div>
-        <Navigation />
+        <Console delay="10"/>
     </div>
 </template>
 
 <script setup>
 import {ref, onMounted} from "vue"
 import Navigation from "../components/Navigation.vue"
+import Console from "../components/Console.vue"
 
 const currentPage = defineModel()
 

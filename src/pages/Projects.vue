@@ -8,14 +8,14 @@
                 <Project title="yRTC" link="https://github.com/zoe2276/yrtc" description="a custom RTC client" />
             </ul>
             
-            <Navigation />
+            <Console delay="5"/>
         </div>
     </div>
 </template>
 
 <script setup>
 import Project from '../components/Project.vue';
-import Navigation from '../components/Navigation.vue';
+import Console from '../components/Console.vue';
 </script>
 
 <style>
