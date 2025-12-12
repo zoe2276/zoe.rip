@@ -1,21 +1,34 @@
 <template>
     <div>
-        <div id="caret" />
         <div>
             <div id="consoleOutput">
                 <Navigation />
             </div>
         </div>
-        <div>
+        <div style="position: relative;">
+            <div id="caret" ref="caretEl" class="caret" :style="caretDynamicStyle" />
             <span id="consoleInput-container">
-                <input id="consoleInput" autofocus autocorrect="false" autocomplete="false" autocapitalize="false" autosave="false" @keyup.enter="sendCommand" />
-            </span>
-        </div>
+                <input id="consoleInput"
+                autofocus
+                autocorrect="false"
+                    autocomplete="false"
+                    autocapitalize="false"
+                    autosave="false"
+                    spellcheck="false"
+                    @input="updateCaret"
+                    @keydown="scheduleUpdate"
+                    @click="updateCaret"
+                    @focus="startBlink"
+                    @blur="stopBlink"
+                    @keyup.enter="sendCommand"
+                    ref="caretInputEl" />
+                </span>
+            </div>
     </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Navigation from './Navigation.vue'
 
@@ -42,7 +55,7 @@ const sendCommand = (e) => {
     if (command === "cd") {
         setTimeout(() => navigateTo(args[0]), 750)
     } else {
-        appendToOutput("unknown command: ", command)
+        appendToOutput(`unknown command: ${command}`)
     }
     // reset input
     e.target.value = ""
@@ -75,30 +88,112 @@ const navigateTo = (path) => {
     }
 }
 
-// delay showing until ready
+// caret positioning
+const caretEl = ref(null) // document.querySelector("#caret")
+const caretInputEl = ref(null)
+const text = ref('')
+
+const caretX = ref(0)
+const caretVisible = ref(true)
+
+let blinkTimer = null
+let mirrorEl = null // mirrors the input to provide caret position
+
+const assertMirror = input => {
+    if (mirrorEl) return mirrorEl
+    mirrorEl = document.createElement("div")
+    mirrorEl.style.position = "absolute"
+    mirrorEl.style.left = "-99999px"
+    mirrorEl.style.top = "-99999px"
+    mirrorEl.style.whiteSpace = "pre"
+    mirrorEl.style.visibility = "hidden"
+    mirrorEl.style.pointerEvents = "none"
+    document.body.appendChild(mirrorEl)
+    return mirrorEl
+}
+
+const updateCaret = () => {
+    const input = caretInputEl.value
+    const caret = caretEl.value
+    if (!input || !caret) return
+
+    const selStart = input.selectionStart ?? 0
+    
+    const computedStyles = getComputedStyle(input)
+    
+    // copy all styles that affect text width
+    const mirror = assertMirror(input)
+    mirror.style.fontFamily = computedStyles.fontFamily
+    mirror.style.fontSize = computedStyles.fontSize
+    mirror.style.fontWeight = computedStyles.fontWeight
+    mirror.style.fontStyle = computedStyles.fontStyle
+    mirror.style.letterSpacing = computedStyles.letterSpacing
+    mirror.style.textTransform = computedStyles.textTransform
+    mirror.style.textRendering = "optimizeLegibility"
+    mirror.textContent = input.value.slice(0, selStart)
+    
+    const textWidth = mirror.offsetWidth
+    
+    const paddingLeft = parseFloat(computedStyles.paddingLeft) || 0
+    const borderLeft = parseFloat(computedStyles.borderLeftWidth) || 0
+    const scrollLeft = input.scrollLeft || 0
+
+    let x = borderLeft + paddingLeft + textWidth - scrollLeft // calc native caret x position
+
+    // keep caret inbounds
+    const paddingRight = parseFloat(computedStyles.paddingRight) || 0
+    const minX = borderLeft + paddingLeft
+    const maxX = input.clientWidth - paddingRight - 1
+    x = Math.max(minX, Math.min(maxX, x))
+
+    caretX.value = x
+
+    const caretTop = parseFloat(computedStyles.borderTopWidth || 0) + parseFloat(computedStyles.paddingTop || 0) // lol
+    const lineHeight = parseFloat(computedStyles.lineHeight)
+    const height = Number.isFinite(lineHeight) ? lineHeight : input.clientHeight - (parseFloat(computedStyles.paddingTop || 0) + parseFloat(computedStyles.paddingBottom || 0))
+
+    caretEl.value.style.top = `${caretTop}px` // still funny
+    caretEl.value.style.height = `${height}px`
+    caretEl.value.style.left = `${caretX.value}px`
+}
+
+const scheduleUpdate = () => requestAnimationFrame(updateCaret)
+
+// blink
+const startBlink = () => {
+    caretVisible.value = true
+    if (blinkTimer) clearInterval(blinkTimer)
+    blinkTimer = setInterval(() => (caretVisible.value = !caretVisible.value), 500)
+}
+
+const stopBlink = () => {
+    if (blinkTimer) clearInterval(blinkTimer)
+    blinkTimer = null
+caretVisible.value = false
+}
+
+const caretDynamicStyle = computed(() => ({
+    opacity: caretVisible.value ? 1 : 0,
+}))
+
 onMounted(() => {
+    // delay showing until ready
     const inputContainer = document.querySelector("#consoleInput-container:not(.shown)")
     inputContainer.setAttribute("style", `animation: type 1s steps(1, end) ${props.delay}s;`)
     setTimeout(() => inputContainer.classList.add("shown"), props.delay * 1001)
+
+    setTimeout(() => nextTick(updateCaret), 3000)
+    // recompute on window resize since stuff can change
+    window.addEventListener('resize', updateCaret)
 })
 
-// caret positioning
-const caretEl = document.querySelector("#caret")
-
-const getCaretPos = () => {
-    setTimeout(() => console.log(window.getSelection().getRangeAt(0)), 0)
-}
-let caretPos
-// update caret pos callback function
-
-// onMounted(() => {
-//     const inputEl = document.querySelector("#consoleInput")
-//     inputEl.addEventListener('keydown', e => {
-//         // caretPos = getCaretPos()
-//         // console.log(caretPos)
-//         console.log(window.getSelection().getRangeAt(0))
-//     })
-// })
+// cleanup
+onUnmounted(() => {
+    window.removeEventListener('resize', updateCaret)
+    if (mirrorEl && mirrorEl.parentNode) mirrorEl.parentNode.removeChild(mirrorEl)
+    mirrorEl = null
+    stopBlink ()
+})
 </script>
 
 <style scoped>
@@ -108,7 +203,7 @@ let caretPos
 
 #consoleInput {
     color:#42b983ee;
-    /* caret-color: transparent; */
+    caret-color: transparent;
     background: transparent;
     border: none;
     width: 100%;
@@ -127,6 +222,7 @@ let caretPos
 }
 
 #consoleInput-container {
+    position: relative;
     display: block;
     width: 0;
     height: 0;
@@ -142,23 +238,18 @@ let caretPos
     &::before {
         content: "";
         position: absolute;
-        left: 4rem;
+        left: -1.25rem;
         font-weight: 600;
         line-height: 1.25;
     }
 }
-#caret {
+.caret {
     position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translate(96.9688px, -50%);
-    
-    opacity: 0;
+    width: 0;
 
-    width: 0.66rem;
+    border-right: 0.66rem solid #42b983ee;
+    pointer-events: none;
     height: 1.25rem;
     /* background-color: #42b983ee; */
-
-    animation: blink 1s steps(2, end) infinite;
 }
 </style>
