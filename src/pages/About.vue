@@ -1,7 +1,7 @@
 <template>
     <div id="page-about">
         <pre>hello. my name is zoe. this is my website. make yourself at home.</pre>
-        <Console delay="5"/>
+        <Console delay="3"/>
     </div>
 </template>
 

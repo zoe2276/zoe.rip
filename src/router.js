@@ -6,10 +6,11 @@ import Projects from "./pages/Projects.vue";
 import Login from "./pages/Login.vue";
 
 const routes = [
-    { path: "/", component: Home },
-    { path: "/about", component: About },
-    { path: "/projects", component: Projects},
-    { path: "/login", component: Login}
+    { name: "./", path: "/", component: Home },
+    { name: "./about", path: "/about", component: About },
+    { name: "./projects", path: "/projects", component: Projects},
+    { name: "./login", path: "/login", component: Login},
+    { path: "/home", redirect: "/" }
 ]
 
 const router = createRouter({

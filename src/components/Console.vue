@@ -8,7 +8,7 @@
         </div>
         <div>
             <span id="consoleInput-container">
-                <input id="consoleInput" autofocus @keyup.enter="sendCommand"/>
+                <input id="consoleInput" autofocus autocorrect="false" autocomplete="false" autocapitalize="false" autosave="false" @keyup.enter="sendCommand" />
             </span>
         </div>
     </div>
@@ -16,9 +16,11 @@
 
 <script setup>
 import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import Navigation from './Navigation.vue'
 
 const props = defineProps(['delay'])
+const router = useRouter()
 
 let outputEl = document.querySelector("#consoleOutput")
 let inputEl = document.querySelector("#consoleInput")
@@ -27,14 +29,21 @@ const appendToOutput = text => {
     outputEl ??= document.querySelector("#consoleOutput")
     const vEl = document.createElement("p")
     vEl.innerHTML = text
-    outputEl.appendChild(vEl)
+    // random small delay to help prevent spam
+    setTimeout(() => outputEl.appendChild(vEl), Math.random() * 250)
 }
 
 const sendCommand = (e) => {
-    appendToOutput(e.target.value)
+    const input = e.target.value
+    appendToOutput(input)
     // process command
 
-    console.log(e.target.value)
+    const [command, ...args] = input.split(" ")
+    if (command === "cd") {
+        setTimeout(() => navigateTo(args[0]), 750)
+    } else {
+        appendToOutput("unknown command: ", command)
+    }
     // reset input
     e.target.value = ""
 }
@@ -43,11 +52,27 @@ const sendCommand = (e) => {
 const typeIntoInput = text => {
     inputEl ??= document.querySelector("#consoleInput")
     for (char in text.split("")) {
-        inputEl.value += char
+        setTimeout(() => inputEl.value += char, 75)
     }
     inputEl.dispatchEvent(new KeyboardEvent("keyup", {
         key: "enter"
     }))
+}
+
+const navigateTo = (path) => {
+    if (path === "..") {
+        router.back()
+    } else {
+        try {
+            router.push({path: path})
+        } catch {
+            try { 
+                router.push({ name: path })
+            } catch {
+                appendToOutput(`path "${path}" not found.`)
+            } 
+        }        
+    }
 }
 
 // delay showing until ready
@@ -119,6 +144,7 @@ let caretPos
         position: absolute;
         left: 4rem;
         font-weight: 600;
+        line-height: 1.25;
     }
 }
 #caret {
