@@ -3,15 +3,21 @@
         <!-- <div> -->
             <span class="label-username" :id="`label-${type}`">username:</span>
         <!-- </div> -->
-        <input id="loginForm-username" v-model="username" type="text" @blur="checkForValue" @input="updateCaretPos"/>
-        <div class="caret" :id="`${type}-caret`" />
+        <input id="loginForm-username" v-model="username" type="text"
+            @input="scheduleUpdate"
+            @keydown="scheduleUpdate"
+            @click="scheduleUpdate"
+            @blur="checkForValue"
+            ref="inputEl"
+        />
+        <div id="caret" ref="caretEl" class="caret" :style="caretStyle" />
     </div>
     <div class="loginField-container" v-else-if="props.type === 'password'">
         <!-- <div> -->
-            <span class="label-password" :id="`label-${type}`">password:</span>
+            <label class="label-password" for="loginForm-password" :id="`label-${type}`">password:</label>
         <!-- </div> -->
-        <input id="loginForm-password" v-model="password" type="password" @blur="checkForValue" @keyup.enter="submit" />
-        <div class="caret" :id="`${type}-caret`" />
+        <input id="loginForm-password" v-model="password" type="password" @blur="checkForValue" @keyup.enter="submit" ref="inputEl" />
+        <div id="caret" ref="caretEl" class="caret" :style="caretStyle" />
     </div>
     <div v-else-if="props.type === 'submit'">
         <button @click="submit">submit</button>
@@ -19,8 +25,19 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref } from 'vue';
 import { backspaceEffect, typeEffect } from '../composables/typewriter';
+import { useCaret } from "../composables/caret"
+
+// caret stuff
+const inputEl = ref(null)
+const caretEl = ref(null)
+const text = ref(null)
+const {caretStyle, scheduleUpdate} = useCaret({
+    target: inputEl,
+    caret: caretEl
+})
+
 
 const props = defineProps(['type'])
 const emit = defineEmits(['checkForValue', 'submit'])
@@ -28,7 +45,6 @@ const username = defineModel('username')
 const password = defineModel('password')
 
 const checkForValue = e => emit('checkForValue', e)
-
 const submit = e => {
     emit('submit', { username: username.value, password: password.value })
 }
@@ -37,47 +53,11 @@ onMounted(() => {
     typeEffect(`.label-${props.type}`, 15, props.type === "username" ? 3 : 0.5)
 })
 
+// cleanup
 onUnmounted(() => {
     backspaceEffect(`.label-${props.type}`, 20, 0)
 })
-
-// handle the caret positioning
-const updateCaretPos = () => {
-    /** Measure the width of provided text using an invisible canvas */
-    const measureWidth = (text, font) => {
-        const canvas = document.createElement("canvas")
-        const context = canvas.getContext("2d")
-        context.font = font
-        const metrics = context.measureText(text)
-        return metrics.width
-    }
-
-    const inputEl = document.getElementById(`loginForm-${props.type}`)
-    const caretEl = document.getElementById(`${props.type}-caret`)
-    const labelEl = document.getElementById(`label-${props.type}`)
-
-    const text = inputEl.value
-    const inputStyles = window.getComputedStyle(inputEl)
-    const font = `${inputStyles.getPropertyValue("font-size")} ${inputStyles.getPropertyValue("font-family")}`
-    const paddingLeft = parseInt(inputStyles.getPropertyValue("padding-left"))
-    const textWidth = measureWidth(text, font) + paddingLeft
-    
-    const caretWidth = caretEl.getBoundingClientRect().width
-    const inputWidth = inputEl.getBoundingClientRect().width
-    const labelWidth = labelEl.getBoundingClientRect().width
-
-    if (textWidth + caretWidth < inputWidth) {
-        caretEl.style.transform = `translate(${textWidth + labelWidth + caretWidth}px, -50%)`
-    }
-}
 </script>
-
-<style>
-    @keyframes blink {
-        from { background-color: #42b983ee; }
-        to { background-color: transparent; }
-    }
-</style>
 
 <style scoped>
 .loginField-container {
@@ -87,12 +67,11 @@ const updateCaretPos = () => {
 input {
     color:#42b983ee;
     caret-color: transparent;
-    /* caret-color: #42b983ee; */
-    /* caret-animation: auto; */
-    /* caret-shape: block; */
     background: transparent;
     border: none;
-    /* border-left: 0.66rem solid #42b983ee !important; */
+    outline: none;
+    border-bottom: 1px solid #42b983ee !important;
+    border-bottom-style: dashed !important;
     margin-left: 0.5rem;
     width: clamp(32px, 50%, 400px);
     line-height: 1.25rem;
@@ -116,22 +95,5 @@ span[class^=label-] {
         width: 100%;
         height: auto;
     }
-}
-.caret {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translate(96.9688px, -50%);
-    
-    opacity: 0;
-
-    width: 0.66rem;
-    height: 1.25rem;
-    /* background-color: #42b983ee; */
-
-    animation: blink 1s steps(2, end) infinite;
-}
-input:focus ~ .caret {
-    opacity: 1;
 }
 </style>

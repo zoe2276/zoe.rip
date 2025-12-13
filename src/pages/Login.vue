@@ -2,8 +2,8 @@
     <div id="page-login">
         <div>
             <LoginField type="username" v-model:username="loginForm.username" @checkForValue="checkForUsername" />
-            <LoginField type="password" v-model:password="loginForm.password" v-if="hasUsername" @checkForValue="checkForPassword" />
-            <LoginField type="submit" @submit="submitLogin" v-if="hasUsername && hasPassword" />
+            <LoginField type="password" v-model:password="loginForm.password" @checkForValue="checkForPassword" />
+            <!-- <LoginField type="submit" @submit="submitLogin" v-if="hasUsername && hasPassword" /> -->
         </div>
         <Navigation position="top" />
     </div>

@@ -1,49 +1,49 @@
 <template>
     <div>
         <div>
-            <div id="consoleOutput">
-                <Navigation />
+            <div id="consoleOutput" ref="outputEl">
+                <Navigation @handleClick="typeIntoInput" />
             </div>
         </div>
         <div style="position: relative;">
-            <div id="caret" ref="caretEl" class="caret" :style="caretDynamicStyle" />
+            <div id="caret" ref="caretEl" :style="caretStyle" />
             <span id="consoleInput-container">
                 <input id="consoleInput"
-                autofocus
-                autocorrect="false"
+                    autofocus
+                    autocorrect="false"
                     autocomplete="false"
                     autocapitalize="false"
                     autosave="false"
                     spellcheck="false"
-                    @input="updateCaret"
+                    @input="scheduleUpdate"
                     @keydown="scheduleUpdate"
-                    @click="updateCaret"
-                    @focus="startBlink"
-                    @blur="stopBlink"
+                    @click="scheduleUpdate"
                     @keyup.enter="sendCommand"
-                    ref="caretInputEl" />
-                </span>
-            </div>
+                    ref="inputEl" 
+                />
+            </span>
+        </div>
     </div>
 </template>
 
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useCaret } from "../composables/caret"
 import Navigation from './Navigation.vue'
 
 const props = defineProps(['delay'])
 const router = useRouter()
 
-let outputEl = document.querySelector("#consoleOutput")
-let inputEl = document.querySelector("#consoleInput")
+const outputEl = ref(null)
+const inputEl = ref(null)
 
 const appendToOutput = text => {
-    outputEl ??= document.querySelector("#consoleOutput")
     const vEl = document.createElement("p")
     vEl.innerHTML = text
+    const oEl = outputEl.value
     // random small delay to help prevent spam
-    setTimeout(() => outputEl.appendChild(vEl), Math.random() * 250)
+    setTimeout(() => oEl.appendChild(vEl), Math.random() * 250)
 }
 
 const sendCommand = (e) => {
@@ -63,11 +63,12 @@ const sendCommand = (e) => {
 
 // simulate running commands
 const typeIntoInput = text => {
-    inputEl ??= document.querySelector("#consoleInput")
-    for (char in text.split("")) {
-        setTimeout(() => inputEl.value += char, 75)
+    const iEl = inputEl.value
+    if (!iEl) return
+    for (let char in text.split("")) {
+        setTimeout(() => iEl.dispatchEvent(new KeyboardEvent("keyup", { key: char })), 75)
     }
-    inputEl.dispatchEvent(new KeyboardEvent("keyup", {
+    iEl.dispatchEvent(new KeyboardEvent("keyup", {
         key: "enter"
     }))
 }
@@ -89,111 +90,22 @@ const navigateTo = (path) => {
 }
 
 // caret positioning
-const caretEl = ref(null) // document.querySelector("#caret")
-const caretInputEl = ref(null)
-const text = ref('')
+const caretEl = ref(null)
+const text = ref(null)
 
-const caretX = ref(0)
-const caretVisible = ref(true)
+const {caretStyle, scheduleUpdate} = useCaret({
+    target: inputEl,
+    caret: caretEl
+})
 
-let blinkTimer = null
-let mirrorEl = null // mirrors the input to provide caret position
-
-const assertMirror = input => {
-    if (mirrorEl) return mirrorEl
-    mirrorEl = document.createElement("div")
-    mirrorEl.style.position = "absolute"
-    mirrorEl.style.left = "-99999px"
-    mirrorEl.style.top = "-99999px"
-    mirrorEl.style.whiteSpace = "pre"
-    mirrorEl.style.visibility = "hidden"
-    mirrorEl.style.pointerEvents = "none"
-    document.body.appendChild(mirrorEl)
-    return mirrorEl
-}
-
-const updateCaret = () => {
-    const input = caretInputEl.value
-    const caret = caretEl.value
-    if (!input || !caret) return
-
-    const selStart = input.selectionStart ?? 0
-    
-    const computedStyles = getComputedStyle(input)
-    
-    // copy all styles that affect text width
-    const mirror = assertMirror(input)
-    mirror.style.fontFamily = computedStyles.fontFamily
-    mirror.style.fontSize = computedStyles.fontSize
-    mirror.style.fontWeight = computedStyles.fontWeight
-    mirror.style.fontStyle = computedStyles.fontStyle
-    mirror.style.letterSpacing = computedStyles.letterSpacing
-    mirror.style.textTransform = computedStyles.textTransform
-    mirror.style.textRendering = "optimizeLegibility"
-    mirror.textContent = input.value.slice(0, selStart)
-    
-    const textWidth = mirror.offsetWidth
-    
-    const paddingLeft = parseFloat(computedStyles.paddingLeft) || 0
-    const borderLeft = parseFloat(computedStyles.borderLeftWidth) || 0
-    const scrollLeft = input.scrollLeft || 0
-
-    let x = borderLeft + paddingLeft + textWidth - scrollLeft // calc native caret x position
-
-    // keep caret inbounds
-    const paddingRight = parseFloat(computedStyles.paddingRight) || 0
-    const minX = borderLeft + paddingLeft
-    const maxX = input.clientWidth - paddingRight - 1
-    x = Math.max(minX, Math.min(maxX, x))
-
-    caretX.value = x
-
-    const caretTop = parseFloat(computedStyles.borderTopWidth || 0) + parseFloat(computedStyles.paddingTop || 0) // lol
-    const lineHeight = parseFloat(computedStyles.lineHeight)
-    const height = Number.isFinite(lineHeight) ? lineHeight : input.clientHeight - (parseFloat(computedStyles.paddingTop || 0) + parseFloat(computedStyles.paddingBottom || 0))
-
-    caretEl.value.style.top = `${caretTop}px` // still funny
-    caretEl.value.style.height = `${height}px`
-    caretEl.value.style.left = `${caretX.value}px`
-}
-
-const scheduleUpdate = () => requestAnimationFrame(updateCaret)
-
-// blink
-const startBlink = () => {
-    caretVisible.value = true
-    if (blinkTimer) clearInterval(blinkTimer)
-    blinkTimer = setInterval(() => (caretVisible.value = !caretVisible.value), 500)
-}
-
-const stopBlink = () => {
-    if (blinkTimer) clearInterval(blinkTimer)
-    blinkTimer = null
-caretVisible.value = false
-}
-
-const caretDynamicStyle = computed(() => ({
-    opacity: caretVisible.value ? 1 : 0,
-}))
 
 onMounted(() => {
     // delay showing until ready
     const inputContainer = document.querySelector("#consoleInput-container:not(.shown)")
     inputContainer.setAttribute("style", `animation: type 1s steps(1, end) ${props.delay}s;`)
     setTimeout(() => inputContainer.classList.add("shown"), props.delay * 1001)
-
-    setTimeout(() => nextTick(updateCaret), 3000)
-    // recompute on window resize since stuff can change
-    window.addEventListener('resize', updateCaret)
 })
 
-// cleanup
-onUnmounted(() => {
-    window.removeEventListener('resize', updateCaret)
-    if (mirrorEl && mirrorEl.parentNode) mirrorEl.parentNode.removeChild(mirrorEl)
-    mirrorEl = null
-    stopBlink ()
-})
 </script>
 
 <style scoped>
@@ -243,13 +155,21 @@ onUnmounted(() => {
         line-height: 1.25;
     }
 }
-.caret {
-    position: absolute;
-    width: 0;
+</style>
 
-    border-right: 0.66rem solid #42b983ee;
-    pointer-events: none;
-    height: 1.25rem;
-    /* background-color: #42b983ee; */
+<style>
+#caret {
+    visibility: hidden;
 }
+
+@keyframes blink {
+    0% {opacity: 1}
+    50% {opacity: 0}
+    100% { opacity: 1}
+}
+
+ .blinking {
+    visibility: visible !important;
+    animation: blink 1s step-end infinite
+ }
 </style>

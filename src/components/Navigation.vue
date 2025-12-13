@@ -1,17 +1,19 @@
 <template>
     <div id= "navmenu">
         <div class="navtarget" v-if="$route.path === '/'">welcome. where would you like to go?</div>
-        <RouterLink class="navtarget active" v-if="$route.path !== '/'" to="/">./home</RouterLink>
+        <RouterLink class="navtarget active" v-if="$route.path !== '/'" to="/" custom v-slot="{href}">
+            <a @click="e => $emit('handleClick', e.target.innerHTML)" :href="href">./home</a>
+        </RouterLink>
         <div class="navtarget" v-else>./home [*]</div> 
-        <RouterLink class="navtarget active" v-if="$route.path !== '/about'" to="/about">./about</RouterLink>
+        <RouterLink class="navtarget active" v-if="$route.path !== '/about'" to="/about" @click.prevent="e => $emit('handleClick', e.target.innerHTML)">./about</RouterLink>
         <div class="navtarget" v-else>./about [*]</div>
-        <RouterLink class="navtarget active" v-if="$route.path !== '/projects'" to="/projects">./projects</RouterLink>
+        <RouterLink class="navtarget active" v-if="$route.path !== '/projects'" to="/projects" @click.prevent="e => $emit('handleClick', e.target.innerHTML)">./projects</RouterLink>
         <div class="navtarget" v-else>./projects [*]</div>
-        <RouterLink class="navtarget active" v-if="$route.path !== '/login' && !isLoggedIn" to="/login">./login</RouterLink>
+        <RouterLink class="navtarget active" v-if="$route.path !== '/login' && !isLoggedIn" to="/login" @click.prevent="e => $emit('handleClick', e.target.innerHTML)">./login</RouterLink>
         <div class="navtarget" v-else-if="$route.path === '/login'">./login [*]</div>
         <div class="navtarget strikethru" v-else>./login</div>
         <!-- protected endpoints -->
-        <RouterLink class="navtarget active" v-if="isLoggedIn && $route.path !== '/protected'" to="/protected">./projects</RouterLink>
+        <RouterLink class="navtarget active" v-if="isLoggedIn && $route.path !== '/protected'" to="/protected" @click.prevent="e => $emit('handleClick', e.target.innerHTML)">./projects</RouterLink>
         <div class="navtarget" v-else-if="isLoggedIn">./protected [*]</div>
     </div>
 </template>
@@ -22,6 +24,7 @@ import { RouterLink, useRoute } from 'vue-router'
 import { typeEffect } from '../composables/typewriter'
 
 const props = defineProps(["position"])
+const emit = defineEmits(['handleClick'])
 const isLoggedIn = window.localStorage.getItem("jwtAuth")
 
 const setToTop = (positionProp) => {
