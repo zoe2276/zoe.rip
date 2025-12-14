@@ -8,6 +8,7 @@ export interface UseCaretOptions {
     blinkInterval?: number
     hideNativeCaret?: boolean
     useCanvasMeasure?: boolean
+    labelId? : string
 }
 
 export interface UseCaretResult {
@@ -22,7 +23,7 @@ export interface UseCaretResult {
 
 export const useCaret = (options: UseCaretOptions): UseCaretResult => {
     const {
-        target, caret,
+        target, caret, labelId,
         thickness = 10,
         color = "#42b983aa",
         blinkInterval = 500,
@@ -120,7 +121,7 @@ export const useCaret = (options: UseCaretOptions): UseCaretResult => {
         // clamp to visible area
         const maxX = input.clientWidth - (parseFloat(computedStyle.borderRightWidth || "0") || 0) - paddingRight - 1
         const minX = borderLeft + paddingLeft
-        caretX = Math.max(minX, Math.min(maxX, caretX))
+        caretX = Math.max(minX, Math.min(maxX, caretX)) + (labelId ? (document.getElementById(labelId)?.getBoundingClientRect().width || 0) + (parseFloat(caret.value?.style.marginLeft.replace("px", "") || "0") || 0) + 8 : 0)
 
         x.value = Math.round(caretX)
     }

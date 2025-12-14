@@ -1,7 +1,7 @@
 <template>
     <div class="loginField-container" v-if="props.type === 'username'">
         <!-- <div> -->
-            <span class="label-username" :id="`label-${type}`">username:</span>
+            <span class="label-username" :id="`label-loginForm-${type}`">username:</span>
         <!-- </div> -->
         <input id="loginForm-username" v-model="username" type="text"
             @input="scheduleUpdate"
@@ -14,9 +14,15 @@
     </div>
     <div class="loginField-container" v-else-if="props.type === 'password'">
         <!-- <div> -->
-            <label class="label-password" for="loginForm-password" :id="`label-${type}`">password:</label>
+            <span class="label-password" :id="`label-loginForm-${type}`">password:</span>
         <!-- </div> -->
-        <input id="loginForm-password" v-model="password" type="password" @blur="checkForValue" @keyup.enter="submit" ref="inputEl" />
+        <input id="loginForm-password" v-model="password" type="password"
+            @input="scheduleUpdate"
+            @keydown="scheduleUpdate"
+            @click="scheduleUpdate"
+            @blur="checkForValue"
+            @keyup.enter="submit" 
+            ref="inputEl" />
         <div id="caret" ref="caretEl" class="caret" :style="caretStyle" />
     </div>
     <div v-else-if="props.type === 'submit'">
@@ -29,20 +35,21 @@ import { nextTick, onMounted, onUnmounted, ref } from 'vue';
 import { backspaceEffect, typeEffect } from '../composables/typewriter';
 import { useCaret } from "../composables/caret"
 
+const props = defineProps(['type'])
+const emit = defineEmits(['checkForValue', 'submit'])
+const username = defineModel('username')
+const password = defineModel('password')
+
 // caret stuff
 const inputEl = ref(null)
 const caretEl = ref(null)
 const text = ref(null)
 const {caretStyle, scheduleUpdate} = useCaret({
     target: inputEl,
-    caret: caretEl
+    caret: caretEl,
+    labelId: `label-loginForm-${props.type}`
 })
 
-
-const props = defineProps(['type'])
-const emit = defineEmits(['checkForValue', 'submit'])
-const username = defineModel('username')
-const password = defineModel('password')
 
 const checkForValue = e => emit('checkForValue', e)
 const submit = e => {
@@ -50,7 +57,8 @@ const submit = e => {
 }
 
 onMounted(() => {
-    typeEffect(`.label-${props.type}`, 15, props.type === "username" ? 3 : 0.5)
+    typeEffect(`.label-${props.type}`, 15, 3)
+    typeEffect(`#loginForm-${props.type}`, 15, 4)
 })
 
 // cleanup
@@ -72,8 +80,16 @@ input {
     outline: none;
     border-bottom: 1px solid #42b983ee !important;
     border-bottom-style: dashed !important;
-    margin-left: 0.5rem;
-    width: clamp(32px, 50%, 400px);
+    margin-left: 8px;
+    /* margin-left: 0.5rem; */
+    /* width: clamp(32px, 50%, 400px); */
+    width: 0;
+    height: 0;
+
+    &.shown {
+        width: 100%;
+        height: auto;
+    }
     line-height: 1.25rem;
     font-family:'Courier New', Courier, monospace;
     text-shadow: 0 0 1rem #42b983aa;
