@@ -97,6 +97,7 @@ export const useCaret = (options: UseCaretOptions): UseCaretResult => {
         const paddingLeft = parseFloat(computedStyle.paddingLeft || "0") || 0
         const paddingRight = parseFloat(computedStyle.paddingRight || "0") || 0
         const scrollLeft = input.scrollLeft || 0 // helps us stay in visual bounds
+        const inputOffsetLeft = input.offsetLeft
 
         const textUpToCaret = input.value.slice(0, selStart)
         let textWidth = 0
@@ -116,12 +117,12 @@ export const useCaret = (options: UseCaretOptions): UseCaretResult => {
             textWidth = mr.offsetWidth
         }
 
-        let caretX = borderLeft + paddingLeft + textWidth - scrollLeft
+        let caretX = inputOffsetLeft + borderLeft + paddingLeft + textWidth - scrollLeft
         
         // clamp to visible area
         const maxX = input.clientWidth - (parseFloat(computedStyle.borderRightWidth || "0") || 0) - paddingRight - 1
         const minX = borderLeft + paddingLeft
-        caretX = Math.max(minX, Math.min(maxX, caretX)) + (labelId ? (document.getElementById(labelId)?.getBoundingClientRect().width || 0) + (parseFloat(caret.value?.style.marginLeft.replace("px", "") || "0") || 0) + 8 : 0)
+        caretX = Math.max(minX, Math.min(maxX, caretX)) // + (labelId ? (document.getElementById(labelId)?.getBoundingClientRect().width || 0) + (parseFloat(caret.value?.style.marginLeft.replace("px", "") || "0") || 0) + 8 : 0)
 
         x.value = Math.round(caretX)
     }
@@ -136,28 +137,8 @@ export const useCaret = (options: UseCaretOptions): UseCaretResult => {
     }
 
     const scheduleUpdate = () => requestAnimationFrame(update)
-
-    const startBlink = () => {
-        console.log("startBlink")
-        // caretVisible.value = true
-        // if (blinkTimer) {
-        //     clearInterval(blinkTimer)
-        //     blinkTimer = null
-        // }
-        // blinkTimer = window.setInterval(() => caretVisible.value = !caretVisible.value, blinkInterval)
-        caret.value?.classList.add("blinking")
-    }
-
-    const stopBlink = () => {
-        console.log("stopBlink")
-        // if (blinkTimer) {
-        //     clearInterval(blinkTimer)
-        //     blinkTimer = null
-        // }
-        // caretVisible.value = false
-        caret.value?.classList.remove("blinking")
-
-    }
+    const startBlink = () => caret.value?.classList.add("blinking")
+    const stopBlink = () => caret.value?.classList.remove("blinking")
 
     const bindListeners = (el: HTMLInputElement) => {
         if (listenersBound) return
