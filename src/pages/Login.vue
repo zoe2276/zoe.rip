@@ -26,6 +26,10 @@ const successMessage = ref("")
 const isSubmittable = ref(false)
 
 const checkReturnedValue = (type, rv) => {
+    if (type === "loginType") {
+        loginErrorMessage.value = null
+        successMessage.value = null
+    }
     if (!rv) loginErrorMessage.value = `please provide a ${type}`
     if (rv && loginErrorMessage.value && loginErrorMessage.value === `please provide a ${type}`) loginErrorMessage.value = ""
     loginForm.value[type] = rv
@@ -61,8 +65,14 @@ const submitForm = () => {
             submitRegister().then(() => {
                 successMessage.value = "success! please login with your new credentials."
             }).catch(err => {
-                loginErrorMessage.value = `${err} - ${err.response}`
-                throw new Error(err)
+                console.log("error: ", err)
+                err.json().then(errObj => {
+                    console.log('json received')
+                    loginErrorMessage.value = `Error: ${errObj.message}`
+                }).catch(errJsonErr => {
+                    console.log("error getting json", errJsonErr)
+                    loginErrorMessage.value = errJsonErr.statusText
+                })
             })
         } else {
             if (!loginForm.value.username) loginErrorMessage.value = "please provide a username"
@@ -77,7 +87,7 @@ const submitForm = () => {
                 window.localStorage.setItem("jwt", jwt.token)
                 window.localStorage.setItem("jwtExpires", jwt.expiration)
                 successMessage.value = "success! you have signed in."
-            }).catch(async err => {
+            }).catch(err => {
                 err.json().then(errObj => {
                     loginErrorMessage.value = `Error: ${errObj.message}`
                 }).catch(err => {

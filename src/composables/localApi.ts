@@ -13,11 +13,11 @@ async function callApi<T>(endpoint: string, params: ApiParameters): Promise<T> {
     return js // adds some frontend latency to slow down call frequency
 }
 
-export const register = async (username: string, password: string, email: string, role: string = "user") => {
+export const register = async (username: string, email: string, password: string, role: string = "user") => {
     const registrationObj = {
         username: username,
-        password: password,
         email: email,
+        password: password,
         role: role
     }
 
