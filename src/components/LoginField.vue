@@ -69,7 +69,6 @@ onMounted(() => {
     if (props.type === "loginType") {
         document.querySelector("#label-loginForm-loginType-login").classList.add("selectedLoginType")
         typeEffect(".label-loginType-spacer", 15, 3)
-        console.log("loginType:", modelValue)
     }
 
 })

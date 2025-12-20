@@ -47,11 +47,11 @@ const checkReturnedValue = (type, rv) => {
 
 const submitLogin = async () => {
     console.log('submitting for login: ', { username: loginForm.value.username, password: loginForm.value.password })
-    return await login({ username: loginForm.value.username, password: loginForm.value.password })
+    return await login(loginForm.value.username, loginForm.value.password)
 }
 const submitRegister = async () => {
     console.log('submitting for registration: ', { username: loginForm.value.username, email: loginForm.value.email, password: loginForm.value.password })
-    return await register({ username: loginForm.value.username, email: loginForm.value.email, password: loginForm.value.password })
+    return await register(loginForm.value.username, loginForm.value.email, loginForm.value.password)
 }
 
 const submitForm = () => {
@@ -60,9 +60,9 @@ const submitForm = () => {
         if (loginForm.value.username && loginForm.value.email && loginForm.value.password) {
             submitRegister().then(() => {
                 successMessage.value = "success! please login with your new credentials."
-            }).catch(e => {
-                loginErrorMessage.value = e
-                throw new Error(e)
+            }).catch(err => {
+                loginErrorMessage.value = `${err} - ${err.response}`
+                throw new Error(err)
             })
         } else {
             if (!loginForm.value.username) loginErrorMessage.value = "please provide a username"
@@ -74,11 +74,15 @@ const submitForm = () => {
         if (loginForm.value.username && loginForm.value.password) {
             loginErrorMessage.value = ""
             submitLogin().then(jwt => {
-                window.localStorage.setItem("jwt", jwt)
+                window.localStorage.setItem("jwt", jwt.token)
+                window.localStorage.setItem("jwtExpires", jwt.expiration)
                 successMessage.value = "success! you have signed in."
-            }).catch(e => {
-                loginErrorMessage.value = e
-                throw new Error(e)
+            }).catch(async err => {
+                err.json().then(errObj => {
+                    loginErrorMessage.value = `Error: ${errObj.message}`
+                }).catch(err => {
+                    loginErrorMessage.value = err.statusText
+                })
             })
         } else {
             if (!loginForm.value.username) {
