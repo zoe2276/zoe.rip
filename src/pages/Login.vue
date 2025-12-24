@@ -65,12 +65,9 @@ const submitForm = () => {
             submitRegister().then(() => {
                 successMessage.value = "success! please login with your new credentials."
             }).catch(err => {
-                console.log("error: ", err)
                 err.json().then(errObj => {
-                    console.log('json received')
                     loginErrorMessage.value = `Error: ${errObj.message}`
                 }).catch(errJsonErr => {
-                    console.log("error getting json", errJsonErr)
                     loginErrorMessage.value = errJsonErr.statusText
                 })
             })
@@ -84,8 +81,9 @@ const submitForm = () => {
         if (loginForm.value.username && loginForm.value.password) {
             loginErrorMessage.value = ""
             submitLogin().then(jwt => {
+                console.log(jwt)
                 window.localStorage.setItem("jwt", jwt.token)
-                window.localStorage.setItem("jwtExpires", jwt.expiration)
+                window.localStorage.setItem("jwtExpires", jwt.expires)
                 successMessage.value = "success! you have signed in."
             }).catch(err => {
                 err.json().then(errObj => {

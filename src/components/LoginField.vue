@@ -1,14 +1,14 @@
 <template>
     <div class="loginField-container" v-if="['username', 'email', 'password', 'validatePassword'].includes(props.type)">
         <span :class="`label-${type}`" :id="`label-loginForm-${type}`">{{ type === 'validatePassword' ? 'verify password' : type }}:</span>
-        <input :id="`loginForm-${type}`" :v-model="type" :type="['password', 'validatePassword'].includes(props.type) ? 'password' : props.type === 'email' ? 'email' : 'text'"
+        <input :id="`loginForm-${type}`" :v-model="type" :type="['password', 'validatePassword'].includes(props.type) ? 'password' : props.type === 'email' ? 'text' : 'text'" 
             @input="scheduleUpdate"
             @keydown="scheduleUpdate"
             @click="scheduleUpdate"
             @blur="checkForValue"
             @keyup.enter="checkForValue"
             ref="inputEl"
-        />
+        /> <!-- for some reason the email type isn't tracked by the caret-->
         <div id="caret" ref="caretEl" class="caret" :style="caretStyle" />
     </div>
     <div class="loginField-container loginType" v-else-if="props.type === 'loginType'">
