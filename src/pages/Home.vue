@@ -3,13 +3,14 @@
         <div class="asciiTitleContainer">
             <pre class="asciiTitle"></pre>
         </div>
-        <Navigation />
+        <Console delay="10"/>
     </div>
 </template>
 
 <script setup>
 import {ref, onMounted} from "vue"
 import Navigation from "../components/Navigation.vue"
+import Console from "../components/Console.vue"
 
 const currentPage = defineModel()
 
@@ -35,10 +36,6 @@ const asciiTitle = `
 `
 const title = ref({ bin: binaryTitle, ascii: asciiTitle })
 
-const appendClass = (selector, className, delay = 0, first) => {
-    (first ? [document.querySelector(`${selector}:not(.${className})`)].filter(Boolean) : document.querySelectorAll(selector)).forEach(e => setTimeout(() => e.classList.add(className), delay))
-}
-
 const initSiteTitle = () => {
     const e = document.querySelector(".asciiTitle")
     setTimeout(() => e.innerHTML = title.value.bin, 2000)
@@ -48,31 +45,8 @@ const initSiteTitle = () => {
 // set up "initializing..." effect
 onMounted(() => {
     initSiteTitle()
-    appendClass(".crtContainer", "vignette")
 })
 </script>
-
-<style>
-@keyframes type {
-    from { width: 0; }
-    to { width: 100% }
-}
-
-@keyframes grow {
-    from { height: 0 }
-    to { height: auto }
-}
-
-@keyframes slideUp {
-    from { max-height: 100vh }
-    to { max-height: 0 }
-}
-
-@keyframes slideDown {
-  from { max-height: 0 }
-  to { max-height: 100vh }
-}
-</style>
 
 <style scoped>
 #page-home {

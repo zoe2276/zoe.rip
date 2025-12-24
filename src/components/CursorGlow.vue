@@ -13,5 +13,6 @@
     width: 3rem;
     aspect-ratio: 1 / 1;
     border-radius: 100%;
+    pointer-events: none;
 }
 </style>

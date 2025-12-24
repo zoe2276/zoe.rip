@@ -1,12 +1,12 @@
 <template>
     <div id="page-about">
         <pre>hello. my name is zoe. this is my website. make yourself at home.</pre>
-        <Navigation />
+        <Console delay="3"/>
     </div>
 </template>
 
 <script setup>
-import Navigation from '../components/Navigation.vue';
+import Console from '../components/Console.vue';
 </script>
 
 <style>
