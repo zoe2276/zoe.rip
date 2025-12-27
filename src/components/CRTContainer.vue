@@ -1,7 +1,7 @@
 <!-- provide a CRT display overlay as the root component -->
 <template>
-    <div class="crtHousing">
-        <div class="crtContainer" @mousemove="updateShadowPos" @mouseleave="resetElementShadow">
+    <div class="crtHousing" id="crtHousing">
+        <div class="crtContainer" @mousemove="e => updateShadowPos(e, 'crtHousing')" @mouseleave="resetElementShadow">
             <CursorGlow />
             <RouterView />
         </div>
@@ -79,6 +79,7 @@ onUnmounted(() => {
     max-width: 1280px;
     margin-left: clamp(0px, calc(50vw - (0.5 * 1280px)), 100vw);
 }
+
 .crtContainer {
     /* background-color: #2F2F35; */
     position: relative;
@@ -118,17 +119,40 @@ onUnmounted(() => {
 
     &.vignette {
         height: 100%;
-        padding: 4rem 5rem;
         width: 100%;
 
         &::after {
-            border-top: 32px solid #2F2F35;
-            border-bottom: 32px solid #2F2F35;
-            border-left: 40px solid #2F2F35;
-            border-right: 40px solid #2F2F35;
             border-radius: 60px;
             box-shadow: inset 0 0 200px 80px #0007;
         }
     }
 }
+
+@media only screen and (max-width: 1200px) {
+
+    .crtContainer.vignette {
+        padding: 4vh calc(2rem + 5vw) !important;
+    
+        &::after {
+            border-top: 3vh solid #2F2F35 !important;
+            border-bottom: 3vh solid #2F2F35 !important;
+            border-left: 4vw solid #2F2F35 !important;
+            border-right: 4vw solid #2F2F35 !important;
+        }
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .crtContainer.vignette {
+        padding: 4rem 5rem;
+        
+        &::after {
+            border-top: 32px solid #2F2F35;
+            border-bottom: 32px solid #2F2F35;
+            border-left: 40px solid #2F2F35;
+            border-right: 40px solid #2F2F35;
+        }
+    }
+}
+
 </style>
