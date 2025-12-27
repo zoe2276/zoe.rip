@@ -1,6 +1,14 @@
 <template>
     <div id="page-about">
-        <pre>hello. my name is zoe. this is my website. make yourself at home.</pre>
+        <p>
+            hello. my name is zoe. this is my website. make yourself at home.
+<br />
+<br />
+            i am a hobbyist programmer. i started very young, playing with HTML and CSS before moving on to learn JavaScript and React.js, where most of my experience lies.
+<br />
+<br />
+            now, i have bigger ideas and i hope to get them implemented here as soon as possible!
+        </p>
         <Console delay="3"/>
     </div>
 </template>
