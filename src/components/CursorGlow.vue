@@ -14,5 +14,9 @@
     aspect-ratio: 1 / 1;
     border-radius: 100%;
     pointer-events: none;
+    background: #42b983;
+    filter:blur(24px);
+
+    visibility: hidden;
 }
 </style>
