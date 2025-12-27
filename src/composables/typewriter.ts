@@ -5,6 +5,7 @@ export const typeEffect = (selector: string, charsPerSecond: number = 20, delay:
         const typeDuration = charCount / charsPerSecond
         const styleString = `animation: type ${typeDuration}s steps(${charCount}, end) ${delay}s, grow 1ms steps(1, end) ${delay}s;`
         el.setAttribute("style", styleString)
+        el.addEventListener("animationend", () => el.classList.add("shown"))
         setTimeout(() => el.classList.add("shown"), delay * 1001)
         delay += typeDuration
     })
