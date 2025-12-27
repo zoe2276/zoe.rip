@@ -15,8 +15,8 @@
     border-radius: 100%;
     pointer-events: none;
     background: #42b983;
-    filter:blur(24px)
-    /* box-shadow: 0px 0px 10vmin #42b983; */
+    filter:blur(24px);
 
+    visibility: hidden;
 }
 </style>
