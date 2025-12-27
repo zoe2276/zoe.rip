@@ -9,8 +9,8 @@
                 <Project title="yRTC" link="https://github.com/zoe2276/yrtc" description="a custom RTC client" />
             </ul>
             
-            <Console delay="3"/>
         </div>
+        <Console delay="3"/>
     </div>
 </template>
 
