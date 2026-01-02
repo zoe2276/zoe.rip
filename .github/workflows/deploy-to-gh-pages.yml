@@ -4,36 +4,72 @@ name: Deploy Vue app to GitHub Pages
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      # Root site
+      - name: Checkout (root repo)
         uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
+          cache: "npm"
 
-      - name: Install dependencies
+      - name: Install dependencies (root)
         run: npm ci
 
-      - name: Build Vue app
+      - name: Build Vue app (root)
         run: npm run build
 
+      - name: Checkout loopi repo
+        uses: actions/checkout@v4
+        with:
+          repository: zoe2276/loopi
+          path: _work/loopi
+
+      - name: Install dependencies (loopi)
+        working-directory: _work/loopi
+        run: npm ci
+
+      - name: Build (loopi)
+        working-directory: _work/loopi
+        run: npm run build
+
+      - name: Mount loopi under /projects/loopi
+        run: |
+          mkdir -p dist/projects/loopi
+          # Adjust if project1 outputs to "build" instead of "dist"
+          cp -R _work/loopi/dist/* dist/projects/loopi/
+
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    permissions:
-      pages: write
-      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
